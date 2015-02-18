@@ -1,0 +1,4 @@
+name = Drop down menu
+description = Provides drop down menu
+core = 7.x
+package = Custom

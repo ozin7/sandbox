@@ -1,0 +1,76 @@
+<?php
+
+function testing_menu() {
+  $items['jsone_page'] = array(
+    'title' => 'Test jsone',
+    'page callback' => 'testing_jsone',
+    'access callback' => TRUE,
+  );
+  $items['ajax_page'] = array(
+    'title' => 'Test ajax',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('testing_ajax_form'),
+    'access callback' => TRUE,
+  );
+  $items['captcha_page'] = array(
+    'title' => 'Test captcha',
+    'page callback' => 'captcha_page',
+//    'page arguments' => array('testing_captcha_form'),
+    'access callback' => TRUE,
+  );
+  return $items;
+}
+
+function testing_jsone() {
+  $jsone = array(
+    '1' => array('test' => 1),
+    '2' => array('test' => 2),
+    '3' => array('test' => 3),
+  );
+  return drupal_json_encode($jsone);
+}
+
+function testing_ajax_form($form, &$form_state) {
+
+  $form['changethis'] = array(
+    '#title' => t("Choose something and explain why"),
+    '#type' => 'select',
+    '#options' => array(
+      1 => 'one',
+      2 => 'two',
+      3 => 'three',
+    ),
+    '#default_value' => 1,
+    '#ajax' => array(
+      'callback' => 'testing_ajax_callback',
+      'wrapper' => 'replace-select-div',
+    ),
+  );
+$default_value = 1;
+   if (!empty($form_state['values']['changethis'])) {
+    $default_value = $form_state['values']['changethis'];
+  }
+
+  $form['changetme'] = array(
+    '#title' => t("Changed"),
+    '#type' => 'select',
+    '#options' => array(
+      1 => 'one',
+      2 => 'two',
+      3 => 'three',
+    ),
+    '#value' => 3,
+    '#prefix' => '<div id="replace-select-div">',
+    '#suffix' => '</div>',
+  );
+  return $form;
+}
+function testing_ajax_callback($form, $form_state){
+
+  return $form['changetme'];
+}
+
+function captcha_page() {
+  $block = module_invoke('sharethis', 'block_view', 'sharethis_block');
+  return $block['content'];
+}

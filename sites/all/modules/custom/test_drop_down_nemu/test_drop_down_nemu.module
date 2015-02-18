@@ -1,0 +1,85 @@
+<?php
+
+/**
+ * Implements hook_menu();
+ */
+function test_drop_down_nemu_menu() {
+  $items = array();
+  $items['cities'] = array(
+    'title' => 'cities',
+    'page callback' => 'test_drop_down_nemu_cities_page',
+    'access callback' => TRUE,
+  );
+
+  return $items;
+}
+
+/**
+ * Implements hook_block_info();
+ */
+function test_drop_down_nemu_block_info() {
+  $blocks = array();
+
+  $blocks['cities'] = array(
+    'info' => t('Cities menu'),
+    'cache' => DRUPAL_NO_CACHE,
+  );
+
+  return $blocks;
+}
+
+/**
+ * Implements hook_block_view();
+ */
+function test_drop_down_nemu_block_view($delta = '') {
+  $block = array();
+
+  if ($delta == 'cities') {
+    $block['content'] = drupal_get_form('test_drop_down_nemu_form');
+  }
+
+  return $block;
+}
+
+function test_drop_down_nemu_form($form, &$form_state) {
+  $form = array();
+  $default_value = empty($_SESSION['id']) ? 1 : $_SESSION['id'];
+  $form['cities'] = array(
+    '#type' => 'select',
+    '#options' => test_drop_down_nemu_get_options(),
+    '#default_value' => $default_value,
+    '#prefix' => '<div id="cities-menu">',
+    '#suffix' => '</div>',
+    '#ajax' => array(
+      'callback' => 'test_drop_down_nemu_ajax',
+      'wrapper' => 'cities-menu',
+      'progress' => array('type' => 'none'),
+    )
+  );
+
+  return $form;
+}
+
+function test_drop_down_nemu_get_options() {
+  return array(
+    '1' => '1',
+    '2' => '2',
+    '3' => '3',
+  );
+}
+
+function test_drop_down_nemu_ajax($form, &$form_state) {
+  $_SESSION['id'] = $form_state['values']['cities'];
+  ctools_include('ajax');
+  ctools_add_js('ajax-responder');
+
+  $commands = array();
+  $commands[] = ctools_ajax_command_reload();
+  print ajax_render($commands);
+  drupal_exit();
+}
+
+function test_drop_down_nemu_cities_page() {
+  $id = empty($_SESSION['id']) ? 'none' : $_SESSION['id'];
+  return 'Cities ' . $id;
+}

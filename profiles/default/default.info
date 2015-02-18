@@ -1,0 +1,20 @@
+name = Default
+description = Default installation profile.
+version = 7.x-1.0
+core = 7.x
+dependencies[] = block
+dependencies[] = contextual
+dependencies[] = image
+dependencies[] = list
+dependencies[] = menu
+dependencies[] = options
+dependencies[] = path
+dependencies[] = dblog
+dependencies[] = overlay
+dependencies[] = field_ui
+dependencies[] = file
+
+dependencies[] = git_deploy
+dependencies[] = devel
+dependencies[] = admin_menu_toolbar
+dependencies[] = backup_migrate
